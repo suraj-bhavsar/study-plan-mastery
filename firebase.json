@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "study-plan-mastery",
+    "public": "build/web",
     "ignore": [
       "firebase.json",
       "**/.*",
