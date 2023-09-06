@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "63577826035",
+    "project_id": "study-plan-mastery",
+    "storage_bucket": "study-plan-mastery.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63577826035:android:e2c091ac9c046f1a2d0d86",
+        "android_client_info": {
+          "package_name": "com.dashboard.app.study_plan_student_dashboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "63577826035-bmbqbgj9qdkhan1vagnj3ifcvptpuubi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuzTaJqPm317KjZeSMqgJPg9Co50NtJQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "63577826035-bmbqbgj9qdkhan1vagnj3ifcvptpuubi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
