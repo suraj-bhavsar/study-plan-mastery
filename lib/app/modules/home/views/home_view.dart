@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:study_plan_student_dashboard/app/widgets/animated_pulse_container.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -19,8 +20,16 @@ class HomeView extends GetView<HomeController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                AnimatedPulseContainer(
+                  child: Image.asset(
+                    'assets/images/cosmos.png',
+                    height: Get.height / 3,
+                    width: Get.height / 3,
+                  ),
+                ),
+                SizedBox(height: 32),
                 Text(
-                  'Fetching mastery,  please wait....',
+                  'Our journey to the cosmos has begun!',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -28,8 +37,16 @@ class HomeView extends GetView<HomeController> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
-                CircularProgressIndicator(),
+                SizedBox(height: 8),
+                Text(
+                  'Students mastery is currently being fetched for our space quest.',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ));
           case WidgetState.error:
@@ -58,24 +75,56 @@ class HomeView extends GetView<HomeController> {
               ),
             );
           case WidgetState.success:
-            return ListView.separated(
-              padding: EdgeInsets.only(
-                bottom: 100,
-                top: 32,
-                left: 16,
-                right: 16,
-              ),
-              itemBuilder: (context, index) {
-                return DataTile(mastery: controller.studentsData[index]);
-              },
-              separatorBuilder: (context, index) {
-                return Divider(
-                  color: Colors.white,
-                  thickness: 0.5,
-                  height: 32,
-                );
-              },
-              itemCount: controller.studentsData.length,
+            return Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16),
+                  color: Colors.black12,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/logo.png',
+                        height: 64,
+                        width: 64,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Daily Progress Towards Mastery',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    padding: EdgeInsets.only(
+                      bottom: 100,
+                      top: 24,
+                      left: 16,
+                      right: 16,
+                    ),
+                    itemBuilder: (context, index) {
+                      return DataTile(mastery: controller.studentsData[index]);
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider(
+                        color: Colors.white,
+                        thickness: 0.5,
+                        height: 50,
+                      );
+                    },
+                    itemCount: controller.studentsData.length,
+                  ),
+                ),
+              ],
             );
         }
       }),
@@ -89,23 +138,26 @@ class DataTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 120,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            mastery.studentName,
+            (mastery.studentName.capitalize ?? '') + ' (${mastery.grade})',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xffFFB000),
             ),
           ),
         ),
-        SizedBox(width: 8),
-        ...mastery.subjects
-            .map((e) => Expanded(child: MasteryGraph(e)))
-            .toList(),
+        SizedBox(height: 20),
+        Row(
+          children: mastery.subjects
+              .map((e) => Expanded(child: MasteryGraph(e)))
+              .toList(),
+        ),
       ],
     );
   }
