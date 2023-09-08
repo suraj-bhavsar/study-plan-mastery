@@ -2,20 +2,19 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:study_plan_student_dashboard/app/constants.dart';
 import 'package:study_plan_student_dashboard/app/data/models/response/lo_stats.dart';
-import 'package:study_plan_student_dashboard/app/data/models/response/study_plan_mastery_response.dart';
-import 'package:study_plan_student_dashboard/app/widgets/loader.dart';
-import 'package:study_plan_student_dashboard/app/widgets/toast_helper.dart';
-import 'package:study_plan_student_dashboard/main.dart';
 
 class StudentOverallMasteryData {
   final String studentName;
+  final String grade;
   final List<StudentSubjectMastery> subjects;
 
   StudentOverallMasteryData({
     required this.subjects,
     required this.studentName,
+    required this.grade,
   });
 }
 
@@ -35,13 +34,17 @@ class StudentSubjectMastery {
 
 class HomeController extends GetxController {
   final studentsData = List<StudentOverallMasteryData>.empty().obs;
+
+  final _masteryState = WidgetState.initial.obs;
+  WidgetState get masteryState => this._masteryState.value;
+  set masteryState(WidgetState value) => this._masteryState.value = value;
+
   late Dio dio;
 
   @override
   void onInit() {
     _initialiseDio();
     getData();
-
     super.onInit();
   }
 
@@ -60,39 +63,55 @@ class HomeController extends GetxController {
     );
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
   void getData() async {
-    List.generate(10, (index) {
-      List<StudentSubjectMastery> subjects = [];
-      json.forEach((key, value) {
-        subjects.add(
-          StudentSubjectMastery(
-            expectedMasteryData:
-                getExpectedMasteryDataPoints(value["calendar"]),
-            achievedMasteryData:
-                getAchievedMasteryDataPoints(value["calendar"]),
-            dates: (value["calendar"] as Map<String, dynamic>).keys.toList(),
-            subjectName: value["subject_name"],
-          ),
-        );
-      });
-      studentsData.add(
-        StudentOverallMasteryData(
-          subjects: subjects,
-          studentName: 'Baccha',
-        ),
+    try {
+      masteryState = WidgetState.initial;
+      final now = DateTime.now();
+      final todaysDate = DateTime(now.year, now.month, now.day);
+      final startDate = todaysDate.subtract(const Duration(days: 7));
+      final query = {
+        'navigator_user_id': navigatorUserIds.join(','),
+        'start_date': Jiffy(startDate).format('yyyy-MM-dd'),
+        'end_date': Jiffy(todaysDate).format('yyyy-MM-dd'),
+      };
+      final response = await dio.get(
+        '/studyplan/coaches/daily-mastery',
+        queryParameters: query,
       );
-      return studentsData;
-    });
+      Map<String, dynamic> data = response.data["data"];
+      // Access values from the "data" map
+      List<dynamic> overall = data["overall"];
+
+      // Access nested values within "overall" list
+      for (var item in overall) {
+        String name = item["name"];
+        String grade = item["grade"];
+        List<dynamic> mastery = item["mastery"];
+        List<StudentSubjectMastery> subjects = [];
+        // Access nested values within the "mastery" list
+        for (var subject in mastery) {
+          String subjectName = subject["subject_name"];
+          Map<String, dynamic> calendar = subject["calendar"];
+
+          subjects.add(StudentSubjectMastery(
+            expectedMasteryData: getExpectedMasteryDataPoints(calendar),
+            achievedMasteryData: getAchievedMasteryDataPoints(calendar),
+            dates: calendar.keys.toList(),
+            subjectName: subjectName,
+          ));
+        }
+        if (subjects.isNotEmpty) {
+          studentsData.add(StudentOverallMasteryData(
+            subjects: subjects,
+            studentName: name,
+            grade: grade,
+          ));
+        }
+      }
+      masteryState = WidgetState.success;
+    } catch (e) {
+      masteryState = WidgetState.error;
+    }
   }
 
   Future<LoStatsResponse> getLoStats(String loId) async {
@@ -103,16 +122,12 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> getSingleData(String navigatorId) async {
-    final response = StudyPlanMasteryResponse();
-  }
-
   List<FlSpot> getExpectedMasteryDataPoints(Map<String, dynamic> data) {
     List<FlSpot> dataPoints = [];
     int dayCount = 0;
 
     data.forEach((date, values) {
-      int expectedMastery = values['expected_mastery'];
+      int expectedMastery = values['expected_mastery'] ?? 0;
       dataPoints.add(FlSpot(dayCount.toDouble(), expectedMastery.toDouble()));
       dayCount++;
     });
@@ -125,34 +140,12 @@ class HomeController extends GetxController {
     int dayCount = 0;
 
     data.forEach((date, values) {
-      int achievedMastery = values['achieved_mastery'];
+      int achievedMastery = values['achieved_mastery'] ?? 0;
       dataPoints.add(FlSpot(dayCount.toDouble(), achievedMastery.toDouble()));
       dayCount++;
     });
 
     return dataPoints;
-  }
-}
-
-class Helper {
-  // num getMastery(LoStats loStats, DateTime date) {
-  //   if (loStats.progressHistory?.isEmpty ?? true) return 0;
-  //   final history = loStats.progressHistory!;
-  //   for (int i = history.length - 1; i >= 0; i--) {
-  //     final d = history[i].createdAt!;
-  //     if (d.isSameDateAs(date) || d.isBefore(date)) {
-  //       return history[i].progress ?? 0;
-  //     }
-  //   }
-  //   return 0;
-  // }
-}
-
-extension DateExtension on DateTime {
-  bool isSameDateAs(DateTime date) {
-    return this.year == date.year &&
-        this.month == date.month &&
-        this.day == date.day;
   }
 }
 
@@ -187,3 +180,5 @@ extension IntegerExtension on int {
     return '';
   }
 }
+
+enum WidgetState { initial, loading, success, error }

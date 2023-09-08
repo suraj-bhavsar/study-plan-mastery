@@ -10,22 +10,75 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF242b4d),
-      body: Obx(
-        () => ListView.separated(
-          padding: EdgeInsets.all(16),
-          itemBuilder: (context, index) {
-            return DataTile(mastery: controller.studentsData[index]);
-          },
-          separatorBuilder: (context, index) {
-            return Divider(
-              color: Colors.white,
-              thickness: 0.5,
-              height: 32,
+      body: Obx(() {
+        switch (controller.masteryState) {
+          case WidgetState.initial:
+          case WidgetState.loading:
+            return Center(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Fetching mastery,  please wait....',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                CircularProgressIndicator(),
+              ],
+            ));
+          case WidgetState.error:
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Something Went Wrong',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: controller.getData,
+                    child: Text(
+                      'TRY AGAIN',
+                    ),
+                  ),
+                ],
+              ),
             );
-          },
-          itemCount: controller.studentsData.length,
-        ),
-      ),
+          case WidgetState.success:
+            return ListView.separated(
+              padding: EdgeInsets.only(
+                bottom: 100,
+                top: 32,
+                left: 16,
+                right: 16,
+              ),
+              itemBuilder: (context, index) {
+                return DataTile(mastery: controller.studentsData[index]);
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  color: Colors.white,
+                  thickness: 0.5,
+                  height: 32,
+                );
+              },
+              itemCount: controller.studentsData.length,
+            );
+        }
+      }),
     );
   }
 }
@@ -190,7 +243,7 @@ class MasteryGraph extends GetView<HomeController> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Color(0xFFFC7A42),
                         shape: BoxShape.circle,
                       ),
                       height: 8,
@@ -213,7 +266,7 @@ class MasteryGraph extends GetView<HomeController> {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: Color(0xFF3DBCA1),
                         shape: BoxShape.circle,
                       ),
                       height: 8,
