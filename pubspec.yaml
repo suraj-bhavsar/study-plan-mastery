@@ -12,6 +12,7 @@ dependencies:
   flutter_spinkit: ^5.1.0
   bot_toast: ^4.0.3
   firebase_core: ^2.15.1
+  dio: ^5.3.2
   flutter: 
     sdk: flutter
 

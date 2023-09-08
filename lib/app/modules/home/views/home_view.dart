@@ -9,19 +9,22 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.separated(
-        padding: EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          return DataTile(mastery: controller.studentsMasteryData[index]);
-        },
-        separatorBuilder: (context, index) {
-          return Divider(
-            color: Colors.black,
-            thickness: 0.5,
-            height: 32,
-          );
-        },
-        itemCount: controller.studentsMasteryData.length,
+      backgroundColor: Color(0xFF242b4d),
+      body: Obx(
+        () => ListView.separated(
+          padding: EdgeInsets.all(16),
+          itemBuilder: (context, index) {
+            return DataTile(mastery: controller.studentsData[index]);
+          },
+          separatorBuilder: (context, index) {
+            return Divider(
+              color: Colors.white,
+              thickness: 0.5,
+              height: 32,
+            );
+          },
+          itemCount: controller.studentsData.length,
+        ),
       ),
     );
   }
@@ -36,13 +39,13 @@ class DataTile extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 200,
+          width: 120,
           child: Text(
             mastery.studentName,
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Colors.blueAccent,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
             ),
           ),
         ),
@@ -77,6 +80,8 @@ class MasteryGraph extends GetView<HomeController> {
             LineChartData(
               gridData: FlGridData(
                 show: true,
+                verticalInterval: 10,
+                horizontalInterval: 10,
               ),
               titlesData: FlTitlesData(
                 leftTitles: AxisTitles(
@@ -88,9 +93,9 @@ class MasteryGraph extends GetView<HomeController> {
                       return Text(
                         '$value%',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 10,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 11,
                         ),
                       );
                     },
@@ -105,19 +110,23 @@ class MasteryGraph extends GetView<HomeController> {
                       int index = value.toInt();
                       if (index >= 0 &&
                           index < mastery.achievedMasteryData.length) {
-                        final date = mastery.dates.elementAt(index);
-                        final day = date.substring(0, 2);
-                        final month = date.substring(2);
-                        return Text(
-                          '${day.trim()}\n${month.trim()}',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 10,
+                        final date =
+                            DateTime.parse(mastery.dates.elementAt(index));
+                        final day = date.day;
+                        final month = date.month.monthName.substring(0, 4);
+                        return Padding(
+                          padding: EdgeInsets.only(top: 4),
+                          child: Text(
+                            '$day\n$month',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11,
+                            ),
+                            maxLines: 2,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
                         );
                       }
                       return Container();
@@ -132,7 +141,7 @@ class MasteryGraph extends GetView<HomeController> {
               borderData: FlBorderData(
                 show: true,
                 border: Border.all(
-                  color: const Color(0xff37434d),
+                  color: Colors.white54,
                   width: 1,
                 ),
               ),
@@ -140,25 +149,37 @@ class MasteryGraph extends GetView<HomeController> {
               maxX: mastery.achievedMasteryData.length.toDouble() - 1,
               minY: 0,
               maxY: 100,
+              showingTooltipIndicators: [
+                ShowingTooltipIndicators(
+                  [
+                    LineBarSpot(
+                      LineChartBarData(spots: mastery.expectedMasteryData),
+                      1,
+                      mastery.expectedMasteryData[2],
+                    ),
+                  ],
+                )
+              ],
               lineBarsData: [
                 LineChartBarData(
                   spots: mastery.expectedMasteryData,
                   isCurved: false,
-                  color: Colors.blue,
-                  dotData: FlDotData(show: false),
+                  color: Color(0xFFFC7A42),
+                  dotData: FlDotData(show: true),
                   belowBarData: BarAreaData(show: false),
                 ),
                 LineChartBarData(
                   spots: mastery.achievedMasteryData,
                   isCurved: false,
-                  color: Colors.green,
-                  dotData: FlDotData(show: false),
+                  color: Color(0xFF3DBCA1),
+                  dotData: FlDotData(show: true),
                   belowBarData: BarAreaData(show: false),
                 ),
               ],
             ),
           ),
         ),
+        SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -172,14 +193,14 @@ class MasteryGraph extends GetView<HomeController> {
                         color: Colors.blue,
                         shape: BoxShape.circle,
                       ),
-                      height: 10,
-                      width: 10,
+                      height: 8,
+                      width: 8,
                     ),
-                    SizedBox(width: 4),
+                    SizedBox(width: 8),
                     Text(
                       'Expected Mastery',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white70,
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
@@ -195,14 +216,14 @@ class MasteryGraph extends GetView<HomeController> {
                         color: Colors.green,
                         shape: BoxShape.circle,
                       ),
-                      height: 10,
-                      width: 10,
+                      height: 8,
+                      width: 8,
                     ),
-                    SizedBox(width: 4),
+                    SizedBox(width: 8),
                     Text(
                       'Achieved Mastery',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white70,
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
@@ -212,11 +233,11 @@ class MasteryGraph extends GetView<HomeController> {
               ],
             ),
             Text(
-              mastery.subjectName,
+              mastery.subjectName.toUpperCase(),
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.blue,
-                fontWeight: FontWeight.w600,
+                color: Color(0xFFF3AB04),
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

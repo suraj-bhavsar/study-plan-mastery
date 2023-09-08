@@ -14,7 +14,7 @@ class AppColors {
   static const toastSubtitle = Color(0xFFD3D3D3);
 }
 
-const profileIds = [
+const navigatorUserIds = [
   "645ccf9474e0160bf2ea1dea",
   "62738f86d31ad23baad23f09",
   "627e4f74d31ad23baa2640ce",
@@ -59,3 +59,36 @@ const profileIds = [
   "62f21d24632328b8e661a017",
   "63ad6efc096316d5ee270ffa",
 ];
+
+Map<String, dynamic> json = {
+  "maths_id": {
+    "subject_id": "maths_id",
+    "subject_name": "Maths",
+    "calendar": {
+      "2023-09-05": {"expected_mastery": 10, "achieved_mastery": 2},
+      "2023-09-06": {"expected_mastery": 15, "achieved_mastery": 5},
+      "2023-09-07": {"expected_mastery": 20, "achieved_mastery": 8},
+      "2023-09-08": {"expected_mastery": 30, "achieved_mastery": 15}
+    }
+  },
+  "science_id": {
+    "subject_id": "science_id",
+    "subject_name": "Science",
+    "calendar": {
+      "2023-09-05": {"expected_mastery": 10, "achieved_mastery": 2},
+      "2023-09-06": {"expected_mastery": 15, "achieved_mastery": 5},
+      "2023-09-07": {"expected_mastery": 20, "achieved_mastery": 8},
+      "2023-09-08": {"expected_mastery": 30, "achieved_mastery": 15}
+    }
+  },
+  "sst_id": {
+    "subject_id": "sst_id",
+    "subject_name": "SST",
+    "calendar": {
+      "2023-09-05": {"expected_mastery": 10, "achieved_mastery": 2},
+      "2023-09-06": {"expected_mastery": 15, "achieved_mastery": 5},
+      "2023-09-07": {"expected_mastery": 20, "achieved_mastery": 8},
+      "2023-09-08": {"expected_mastery": 30, "achieved_mastery": 15}
+    }
+  },
+};
