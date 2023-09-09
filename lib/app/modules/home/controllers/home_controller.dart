@@ -51,8 +51,8 @@ class HomeController extends GetxController {
   void _initialiseDio() {
     dio = Dio(
       BaseOptions(
-        connectTimeout: Duration(seconds: 15),
-        receiveTimeout: Duration(seconds: 15),
+        connectTimeout: Duration(seconds: 60),
+        receiveTimeout: Duration(seconds: 60),
         contentType: Headers.jsonContentType,
         responseType: ResponseType.json,
         headers: {
@@ -70,7 +70,7 @@ class HomeController extends GetxController {
       final todaysDate = DateTime(now.year, now.month, now.day);
       final startDate = todaysDate.subtract(const Duration(days: 7));
       final query = {
-        'navigator_user_id': navigatorUserIds.join(','),
+        'navigator_user_id': navigatorUserIds.toSet().join(','),
         'start_date': Jiffy(startDate).format('yyyy-MM-dd'),
         'end_date': Jiffy(todaysDate).format('yyyy-MM-dd'),
       };
