@@ -12,6 +12,8 @@ class AppColors {
   static const yellow = Color(0xffFFB000);
   static const toastBackground = Color(0xFF262626);
   static const toastSubtitle = Color(0xFFD3D3D3);
+  static const strategyBackgroundColor = Color(0xFF382D59);
+  static const white = Color(0xFFFFFFFF);
 }
 
 const navigatorUserIds = [

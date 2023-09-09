@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:study_plan_student_dashboard/app/constants.dart';
 import 'package:study_plan_student_dashboard/app/data/models/response/lo_stats.dart';
+import 'package:study_plan_student_dashboard/app/modules/search_page/controllers/search_page_controller.dart';
+import 'package:study_plan_student_dashboard/app/routes/app_pages.dart';
 
 class StudentOverallMasteryData {
   final String studentName;
@@ -146,6 +148,13 @@ class HomeController extends GetxController {
     });
 
     return dataPoints;
+  }
+
+  void search() {
+    Get.toNamed(
+      Routes.SEARCH_PAGE,
+      arguments: SearchPageArguments(mastery: studentsData),
+    );
   }
 }
 
