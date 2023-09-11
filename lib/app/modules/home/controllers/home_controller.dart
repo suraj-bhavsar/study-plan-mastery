@@ -4,7 +4,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:study_plan_student_dashboard/app/constants.dart';
-import 'package:study_plan_student_dashboard/app/data/models/response/lo_stats.dart';
 import 'package:study_plan_student_dashboard/app/modules/search_page/controllers/search_page_controller.dart';
 import 'package:study_plan_student_dashboard/app/routes/app_pages.dart';
 
@@ -46,7 +45,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     _initialiseDio();
-    getData();
+    fetchDataInBatches();
     super.onInit();
   }
 
@@ -116,12 +115,75 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<LoStatsResponse> getLoStats(String loId) async {
-    try {
-      return LoStatsResponse();
-    } catch (e) {
-      throw e;
+  Future<void> fetchDataInBatches() async {
+    final batchCount = 10; // Number of IDs to fetch in each batch
+    final batchedIds = <List<String>>[];
+    final now = DateTime.now();
+    final todaysDate = DateTime(now.year, now.month, now.day);
+    final startDate = todaysDate.subtract(const Duration(days: 9));
+
+    // Split the navigatorUserIds into batches
+    for (int i = 0; i < navigatorUserIds.length; i += batchCount) {
+      final endIndex = (i + batchCount < navigatorUserIds.length)
+          ? i + batchCount
+          : navigatorUserIds.length;
+      batchedIds.add(navigatorUserIds.sublist(i, endIndex));
     }
+
+    // Fetch data for each batch in the background
+    await Future.forEach(batchedIds, (batch) async {
+      try {
+        masteryState = studentsData.isEmpty
+            ? WidgetState.loading
+            : WidgetState.paginationLoading;
+        final batchQuery = {
+          'navigator_user_id': batch.toSet().join(','),
+          'start_date': Jiffy(startDate).format('yyyy-MM-dd'),
+          'end_date': Jiffy(todaysDate).format('yyyy-MM-dd'),
+        };
+
+        final response = await dio.get(
+          '/studyplan/coaches/daily-mastery',
+          queryParameters: batchQuery,
+        );
+
+        // Process the response data for this batch
+        Map<String, dynamic> data = response.data["data"];
+        List<dynamic> overall = data["overall"];
+
+        // Access nested values within "overall" list
+        for (var item in overall) {
+          String name = item["name"];
+          String grade = item["grade"];
+          List<dynamic> mastery = item["mastery"];
+          List<StudentSubjectMastery> subjects = [];
+          // Access nested values within the "mastery" list
+          for (var subject in mastery) {
+            String subjectName = subject["subject_name"];
+            Map<String, dynamic> calendar = subject["calendar"];
+
+            subjects.add(StudentSubjectMastery(
+              expectedMasteryData: getExpectedMasteryDataPoints(calendar),
+              achievedMasteryData: getAchievedMasteryDataPoints(calendar),
+              dates: calendar.keys.toList(),
+              subjectName: subjectName,
+            ));
+          }
+          if (subjects.isNotEmpty) {
+            studentsData.add(StudentOverallMasteryData(
+              subjects: subjects,
+              studentName: name,
+              grade: grade,
+            ));
+          }
+          masteryState = WidgetState.success;
+        }
+      } catch (e) {
+        masteryState = studentsData.isEmpty
+            ? WidgetState.error
+            : WidgetState.paginationError;
+      }
+    });
   }
 
   List<FlSpot> getExpectedMasteryDataPoints(Map<String, dynamic> data) {
@@ -190,4 +252,11 @@ extension IntegerExtension on int {
   }
 }
 
-enum WidgetState { initial, loading, success, error }
+enum WidgetState {
+  initial,
+  loading,
+  paginationLoading,
+  paginationError,
+  success,
+  error
+}

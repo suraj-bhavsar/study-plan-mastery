@@ -73,6 +73,8 @@ class HomeView extends GetView<HomeController> {
                 ],
               ),
             );
+          case WidgetState.paginationLoading:
+          case WidgetState.paginationError:
           case WidgetState.success:
             return Column(
               children: [
