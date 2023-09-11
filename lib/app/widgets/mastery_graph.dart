@@ -93,17 +93,6 @@ class MasteryGraph extends StatelessWidget {
               maxX: mastery.achievedMasteryData.length.toDouble() - 1,
               minY: 0,
               maxY: 100,
-              showingTooltipIndicators: [
-                ShowingTooltipIndicators(
-                  [
-                    LineBarSpot(
-                      LineChartBarData(spots: mastery.expectedMasteryData),
-                      1,
-                      mastery.expectedMasteryData[2],
-                    ),
-                  ],
-                )
-              ],
               lineBarsData: [
                 LineChartBarData(
                   spots: mastery.expectedMasteryData,
