@@ -121,4 +121,51 @@ const navigatorUserIds = [
   "64f5dcac3c320053e9c724e6",
   "645a47cfc0d3709d321669f5",
   "64c4e0b60f019b056db7b381",
+
+  // Miscellaneoous
+  "634e9b3df9ae0ff3eb383d3d",
+  "64faf852a6dcc16c589e63fc",
+  "645512795fcd0778de065135",
+  "62f209fc632328b8e66055d9",
+  "6270d1b6d31ad23baac08a12",
+  "629a4f8744d3a7f890ba05fa",
+  "64f6fdc360806b3f5237ac8a",
+  "629a477d75b331fdea768520",
+  "64896f9defd44fac15722b22",
+  "64b8cef7449b8c6e973bcd83",
+  "6313591147b935e864239465",
+  "62724d7fd31ad23baac6cf83",
+  "644fa36862bac7365bdc3618",
+  "62ebc7b6632328b8e61799b8",
+  "6291df135fd51a05f6bd9442",
+  "629ce256e1cfcd12a4aa3730",
+  "643a745b74e0160bf2a56634",
+  "633788d0ce53fbf8e62385f4",
+  "627e4d11d31ad23baa261603",
+  "64fadda1a2031220275bafe2",
+  "62d681b0fe37d532e9d8f3ab",
 ];
+
+/*
+Harvinder, 8567875646, 6th
+Sudhanshu, 9654583008, 6th
+Ashlee Choudhary, 8360470747, 7th
+Saumya, 7775081275, 10th
+Rishant jangra, 9876292796, 8
+Ryan, 7986029123, 8
+Sangeeta, 8368746293, 7
+Aakarsh, 8360587994, 7
+Ritesh, 9477780000, 10
+Pravesh, 8770870870, 7th
+Trishika, 6005871083, 11
+Tanjil Jain    6th
+Arhoi kaur sandhu    6th
+Akashdeep    10th
+Ananya Sonali Gupta    8th
+manvi shukla    8th
+Almeera    10th
+Alena    10th
+kavya    8th
+Shruti Gautam    7th
+Rudra Pratap Singh    10th
+*/
